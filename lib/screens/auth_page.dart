@@ -15,6 +15,8 @@ class _AuthPageState extends State<AuthPage> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   bool isLogin = true;
+  bool isLoading = false;
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> signIn() async {
     try {
@@ -38,36 +40,73 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Text'),
+        title: const Text('Expenses Tracker App'),
       ),
-      body: Column(
-        children: [
-          TextField(
-            controller: _email,
-            decoration: const InputDecoration(labelText: 'email'),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 50),
+              TextFormField(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a valid email address';
+                  }
+                  return null;
+                },
+                controller: _email,
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(labelText: 'email'),
+              ),
+              TextFormField(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a valid password';
+                  }
+                  return null;
+                },
+                controller: _password,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: 'password'),
+              ),
+              const Spacer(),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Processing'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                  isLogin ? signIn() : createUser();
+                },
+                child: Text(isLogin ? 'Login' : 'SignUp'),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    isLogin = !isLogin;
+                  });
+                },
+                child: Text(
+                  isLogin
+                      ? 'Not a user? SignUp now!'
+                      : 'Already a user? LogIn!',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+              const Spacer(),
+            ],
           ),
-          TextField(
-            controller: _password,
-            obscureText: true,
-            decoration: const InputDecoration(labelText: 'password'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              isLogin ? signIn() : createUser();
-            },
-            child: Text(isLogin ? 'Login' : 'SignUp'),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                isLogin = !isLogin;
-              });
-            },
-            child: Text(isLogin
-                ? 'Non hai un account, registrati!'
-                : 'Hai un account? Accedi!'),
-          ),
-        ],
+        ),
       ),
     );
   }
