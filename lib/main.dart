@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
             ),
       ),
       // themeMode: ThemeMode.system, //!default, but could force in light or dark mode.
-      //? home: const Expenses(),
+      // home: const Expenses(), //? remove comment to load Expenses screen by default on startup + comment from line 73 to 82.
       home: StreamBuilder(
         stream: Auth().authStateChanges,
         builder: (context, snapshot) {
