@@ -1,3 +1,4 @@
+import 'package:expense_tracker/services/auth.dart';
 import 'package:expense_tracker/widgets/chart/chart.dart';
 import 'package:expense_tracker/widgets/expenses_list/expenes_list.dart';
 import 'package:expense_tracker/models/expense.dart';
@@ -39,6 +40,10 @@ class _ExpensesState extends State<Expenses> {
     setState(() {
       _registeredExpenses.add(expense);
     });
+  }
+
+  void _signOut() async {
+    await Auth().signOut();
   }
 
   void _removeExpense(Expense expense) {
@@ -86,6 +91,12 @@ class _ExpensesState extends State<Expenses> {
           IconButton(
             onPressed: _openAddExpenseOvarlay,
             icon: const Icon(Icons.add),
+          ),
+          IconButton(
+            onPressed: () {
+              _signOut();
+            },
+            icon: const Icon(Icons.logout),
           ),
         ],
       ),

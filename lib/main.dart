@@ -1,5 +1,9 @@
+import 'package:expense_tracker/screens/auth_page.dart';
+import 'package:expense_tracker/services/auth.dart';
 import 'package:expense_tracker/widgets/expenses.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 88, 249, 222),
@@ -10,7 +14,11 @@ var kDarkColorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 4, 80, 101),
 );
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -61,7 +69,17 @@ class MyApp extends StatelessWidget {
             ),
       ),
       // themeMode: ThemeMode.system, //!default, but could force in light or dark mode.
-      home: const Expenses(),
+      //? home: const Expenses(),
+      home: StreamBuilder(
+        stream: Auth().authStateChanges,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return const Expenses();
+          } else {
+            return const AuthPage();
+          }
+        },
+      ),
     );
   }
 }
